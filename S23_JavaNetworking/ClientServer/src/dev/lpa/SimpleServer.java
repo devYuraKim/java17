@@ -3,6 +3,7 @@ package dev.lpa;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class SimpleServer {
 
@@ -20,10 +21,14 @@ public class SimpleServer {
             while(true){
                 String echoString = input.readLine();
                 //printed on the server side
-                System.out.println("[server] String from client to server(request): " + echoString);
+                System.out.println("[client] " + echoString);
                 if(echoString.equals("exit")) break;
                 //printed on the client side
-                output.println("[server] String echoed from server to client(response): " + echoString);
+                //output.println("[server] String echoed from server to client(response): " + echoString);
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Enter a string to be sent to client(response): ");
+                output.println("[server] "+ scanner.nextLine());
+                System.out.println("Please wait for the client's request");
             }
             }
         } catch (IOException e) {
