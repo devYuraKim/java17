@@ -1,4 +1,4 @@
-package dev.lpa;
+package dev.lpa.server;
 
 import java.io.*;
 import java.net.ServerSocket;
