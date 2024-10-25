@@ -7,7 +7,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.sql.SQLOutput;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Set;
 
 public class ChannelSelectorServer {
@@ -80,7 +82,7 @@ public class ChannelSelectorServer {
                         //Selector will notify the server code when the channel is ready to be read
                         clientChannel.register(selector, SelectionKey.OP_READ);
                     }else if(key.isReadable()){
-                        echoData(key);
+                        respond(key);
                     }
                 }
             }
@@ -89,7 +91,25 @@ public class ChannelSelectorServer {
         }
     }
 
-    private static void echoData(SelectionKey key) throws IOException{
+//    private static void echoData(SelectionKey key) throws IOException{
+//        SocketChannel clientChannel = (SocketChannel) key.channel();
+//        ByteBuffer buffer = ByteBuffer.allocate(1024);
+//
+//        int bytesRead = clientChannel.read(buffer);
+//        if(bytesRead>0){
+//            buffer.flip();
+//            byte[] data = new byte[buffer.remaining()];
+//            buffer.get(data);
+//            String message = "Echo: " + new String(data);
+//            clientChannel.write(ByteBuffer.wrap(message.getBytes()));
+//        }else if (bytesRead == -1){
+//            System.out.println("Client disconnected: " + clientChannel.getRemoteAddress());
+//            key.cancel();
+//            clientChannel.close();
+//        }
+//    }
+
+    private static void respond(SelectionKey key) throws IOException{
         SocketChannel clientChannel = (SocketChannel) key.channel();
         ByteBuffer buffer = ByteBuffer.allocate(1024);
 
@@ -98,12 +118,20 @@ public class ChannelSelectorServer {
             buffer.flip();
             byte[] data = new byte[buffer.remaining()];
             buffer.get(data);
-            String message = "Echo: " + new String(data);
-            clientChannel.write(ByteBuffer.wrap(message.getBytes()));
-        }else if (bytesRead == -1){
-            System.out.println("Client disconnected: " + clientChannel.getRemoteAddress());
-            key.cancel();
-            clientChannel.close();
+            System.out.print("[From " + ((SocketChannel) key.channel()).getRemoteAddress() + "] " + new String(data));
+
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter message: ");
+            String response = scanner.nextLine() + "\n";
+
+            buffer.clear();
+            buffer.put(response.getBytes());
+            buffer.flip();
+            while(buffer.hasRemaining()){
+                clientChannel.write(buffer);
+            }
+
+            buffer.clear();
         }
     }
 }
