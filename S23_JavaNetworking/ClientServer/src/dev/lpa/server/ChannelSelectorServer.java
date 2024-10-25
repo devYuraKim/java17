@@ -123,6 +123,7 @@ public class ChannelSelectorServer {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter message: ");
             String response = scanner.nextLine() + "\n";
+            //Add newline to mark end of response for client reading
 
             buffer.clear();
             buffer.put(response.getBytes());
