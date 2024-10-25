@@ -2,6 +2,7 @@ package dev.lpa.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -65,18 +66,44 @@ public class ChannelSelectorServer {
                     //Enable new connection processing using a single SelectionKey for the serverChannel
                     iterator.remove();
 
+                    /* [actual client channel registration]
+                    * */
                     //(5)Process each key, check its state and take action
-                    if(key.isAcceptable()){
+                    if(key.isAcceptable()) {
                         /*[Actual creation of client SocketChannel]*/
                         //If the server channel is ready to accept a connection from a client,
                         //call serverChannel.accept() to accept the incoming connection and establish a client channel
                         SocketChannel clientChannel = serverChannel.accept();
                         System.out.println("Client connected: " + clientChannel.socket().getRemoteSocketAddress());
+                        //If the channels are not ready for an operation, it will return immediately and not wait
+                        clientChannel.configureBlocking(false);
+                        //Selector will notify the server code when the channel is ready to be read
+                        clientChannel.register(selector, SelectionKey.OP_READ);
+                    }else if(key.isReadable()){
+                        echoData(key);
                     }
                 }
             }
         }catch(IOException e){
             System.out.println("SERVER ERROR :" + e.getMessage());
+        }
+    }
+
+    private static void echoData(SelectionKey key) throws IOException{
+        SocketChannel clientChannel = (SocketChannel) key.channel();
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+
+        int bytesRead = clientChannel.read(buffer);
+        if(bytesRead>0){
+            buffer.flip();
+            byte[] data = new byte[buffer.remaining()];
+            buffer.get(data);
+            String message = "Echo: " + new String(data);
+            clientChannel.write(ByteBuffer.wrap(message.getBytes()));
+        }else if (bytesRead == -1){
+            System.out.println("Client disconnected: " + clientChannel.getRemoteAddress());
+            key.cancel();
+            clientChannel.close();
         }
     }
 }
