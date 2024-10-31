@@ -1,0 +1,4 @@
+WRITING TO A FILE
+with Path and Files,
+you can not only create and delete files
+but also write to them.
