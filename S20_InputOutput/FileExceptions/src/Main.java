@@ -11,13 +11,31 @@ import java.util.List;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        String filename = "testing.csv";
+        //current working directory
+        System.out.println("Current Working Directory = " + new File("").getAbsolutePath());
+
+        String filename = "files/testing.csv";
         testFile2(filename);
         File file = new File(filename);
         if(!file.exists()){
             System.out.println("The file doesn't exist - Quitting Application");
             return;
         }
+        for(File f : File.listRoots()){
+            System.out.println(f);
+        }
+        System.out.println("Good to go");
+
+        Path path = Paths.get("files/testing.csv");
+        System.out.println(file.getAbsolutePath());
+        if(!Files.exists(path)){
+            System.out.println("[2] The file doesn't exist - Quitting Application");
+            return;
+        }
+        for(File f : File.listRoots()){
+            System.out.println(f);
+        }
+        System.out.println("[2] Good to go");
     }
 
     /*Closing resources with traditional try-catch block*/
