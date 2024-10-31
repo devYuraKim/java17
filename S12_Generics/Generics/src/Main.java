@@ -13,8 +13,12 @@ public class Main {
         BaseballTeam astros1 = new BaseballTeam("Houston Astros1");
         scoreResult(phillies1, 3, astros1, 5);
 
-        SportsTeam phillies = new SportsTeam("Philadelphia Phillies");
-        SportsTeam astros = new SportsTeam("Houston Astros");
+        SportsTeam phillies2 = new SportsTeam("Philadelphia Phillies2");
+        SportsTeam astros2 = new SportsTeam("Houston Astros2");
+        scoreResult(phillies2, 3, astros2, 5);
+
+        Team<BaseballPlayer> phillies = new Team<>("Philadelphia Phillies");
+        Team<BaseballPlayer> astros = new Team<>("Houston Astros");
         scoreResult(phillies, 3, astros, 5);
 
         var harper = new BaseballPlayer("B Harper", "Right");
@@ -23,11 +27,13 @@ public class Main {
         phillies.addTeamMember(marsh);
         phillies.listTeamMembers();
 
-        SportsTeam afc = new SportsTeam("Crows");
+        SportsTeam afc1 = new SportsTeam("Crows1");
+        Team<FootballPlayer> afc = new Team<>("Crows1");
+
         var tex = new FootballPlayer("Tex", "Mid");
         afc.addTeamMember(tex);
-        //Problem1: no type checking
-        afc.addTeamMember(harper);
+        //Type Checking in action
+        //afc.addTeamMember(harper);
         afc.listTeamMembers();
 
     }
@@ -39,6 +45,12 @@ public class Main {
     }
 
     public static void scoreResult(SportsTeam team1, int t1Score, SportsTeam team2, int t2Score){
+        String message = team1.setScore(t1Score, t2Score);
+        team2.setScore(t2Score, t1Score);
+        System.out.printf("%s %s %s %n", team1, message, team2);
+    }
+
+    public static void scoreResult(Team team1, int t1Score, Team team2, int t2Score){
         String message = team1.setScore(t1Score, t2Score);
         team2.setScore(t2Score, t1Score);
         System.out.printf("%s %s %s %n", team1, message, team2);
